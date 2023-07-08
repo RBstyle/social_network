@@ -22,7 +22,11 @@ router = APIRouter(prefix="/posts", tags=["posts"])
 )
 async def create_post(db: Session = Depends(get_db), *, data: ChangePostRequestScheme):
     """Create post"""
-    db_post = Post(ovner_id=1, title=data.title, content=data.content)  #!!!!!!!!!!
+    db_post = Post(
+        owner_id=1,
+        title=data.title,
+        content=data.content,
+    )  #!!!!!!!!!!
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
