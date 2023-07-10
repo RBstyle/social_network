@@ -1,4 +1,5 @@
 import os
+from fastapi.requests import Request
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Union, Any
@@ -6,7 +7,7 @@ from jose import jwt
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutes
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
-ALGORITHM = os.environ("ALGORITHM")
+ALGORITHM = os.environ["ALGORITHM"]
 JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 JWT_REFRESH_SECRET_KEY = os.environ["JWT_REFRESH_SECRET_KEY"]
 

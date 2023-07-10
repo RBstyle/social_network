@@ -15,6 +15,8 @@ from app.schemas.profiles import (
     CreateProfileRequestScheme,
     TokenScheme,
 )
+from app.services.deps import get_current_user
+
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
@@ -71,6 +73,10 @@ async def login(
     }
 
 
-@router.get("/", response_model=ProfileResponseScheme)
+@router.get(
+    "/",
+    response_model=ProfileResponseScheme,
+    dependencies=[Depends(get_current_user)],
+)
 def get_user(id: int = Query(None), db: Session = Depends(get_db)) -> Profile:
     return db.query(Profile).where(Profile.id == id).first()
