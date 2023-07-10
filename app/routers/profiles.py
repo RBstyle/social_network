@@ -1,12 +1,19 @@
 from fastapi import APIRouter, Depends, status, Query, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.db.models import Profile
-from app.services.security import get_hashed_password
+from app.services.security import (
+    get_hashed_password,
+    verify_password,
+    create_access_token,
+    create_refresh_token,
+)
 from app.schemas.profiles import (
     ProfileResponseScheme,
     CreateProfileRequestScheme,
+    TokenScheme,
 )
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
@@ -20,7 +27,7 @@ router = APIRouter(prefix="/profiles", tags=["profiles"])
 async def create_profile(
     db: Session = Depends(get_db), *, data: CreateProfileRequestScheme
 ):
-    """Create user in database"""
+    """Create new user"""
     user = db.query(Profile).filter_by(email=data.email).all()
     if user:
         raise HTTPException(
@@ -37,6 +44,31 @@ async def create_profile(
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+@router.post("/login", response_model=TokenScheme)
+async def login(
+    data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+):
+    db_user = db.query(Profile).filter_by(email=data.username).first()
+
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect email",
+        )
+    hashed_pass = db_user.hashed_password
+
+    if not verify_password(data.password, hashed_pass):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect email or password",
+        )
+
+    return {
+        "access_token": create_access_token(db_user.email),
+        "refresh_token": create_refresh_token(db_user.email),
+    }
 
 
 @router.get("/", response_model=ProfileResponseScheme)

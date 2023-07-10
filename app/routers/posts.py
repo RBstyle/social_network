@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
-from datetime import datetime
 
 from app.db.database import get_db
 from app.db.models import Post
+from app.services.deps import get_current_user
 
+from app.db.models import Profile
 from app.schemas.posts import (
     PostResponseScheme,
     ChangePostRequestScheme,
@@ -20,13 +21,18 @@ router = APIRouter(prefix="/posts", tags=["posts"])
     response_model=PostResponseScheme,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_post(db: Session = Depends(get_db), *, data: ChangePostRequestScheme):
+async def create_post(
+    db: Session = Depends(get_db),
+    *,
+    data: ChangePostRequestScheme,
+    user: Profile = Depends(get_current_user),
+):
     """Create post"""
     db_post = Post(
-        owner_id=1,
+        owner_id=user.id,
         title=data.title,
         content=data.content,
-    )  #!!!!!!!!!!
+    )
     db.add(db_post)
     db.commit()
     db.refresh(db_post)

@@ -21,6 +21,25 @@ class CreateProfileRequestScheme(BaseModel):
     password: str
 
 
+class TokenScheme(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
 class UpdateProfileRequestScheme(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+
+
+class TokenPayload(BaseModel):
+    sub: str = None
+    exp: int = None
+
+
+class UserOut(BaseModel):
+    id: int
+    email: str
+
+
+class SystemUser(UserOut):
+    password: str
