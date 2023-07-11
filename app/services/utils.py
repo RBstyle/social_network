@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
+from fastapi.requests import Request
 
 from app.db.models import Post
 from app.services.deps import get_current_user
@@ -8,8 +10,23 @@ async def get_post(post_id: int, db: Session):
     return db.query(Post).where(Post.id == post_id).first()
 
 
-async def is_own_post(request, post_id, db) -> bool:
+async def is_own_post(request: Request, post_id: int, db: Session) -> bool:
     current_user = await get_current_user(request=request, db=db)
     current_post = await get_post(post_id=post_id, db=db)
 
     return current_user.id == current_post.owner_id
+
+
+async def check_post(request: Request, post_id: int, db: Session):
+    if not await get_post(post_id=post_id, db=db):
+        return HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found",
+        )
+
+    if not await is_own_post(request=request, post_id=post_id, db=db):
+        return HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You can't edit posts that aren't your own",
+        )
+    return None
