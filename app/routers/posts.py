@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.db.models import Post
 from app.services.deps import get_current_user
-from app.services.utils import get_post
+from app.services.utils import get_post, is_own_post
 
 from app.db.models import Profile
 from app.schemas.posts import (
@@ -44,10 +44,7 @@ async def create_post(
     return db_post
 
 
-@router.patch(
-    "/",
-    dependencies=[Depends(get_current_user)],
-)
+@router.patch("/", dependencies=[Depends(get_current_user)])
 async def edit_post(
     request: Request,
     post_id: int = Query(None),
@@ -55,30 +52,50 @@ async def edit_post(
     *,
     data: ChangePostRequestScheme,
 ):
-    current_user = await get_current_user(request=request, db=db)
-    current_post = await get_post(post_id=post_id, db=db)
+    if not await get_post(post_id, db):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found",
+        )
 
-    if current_user.id == current_post.owner_id:
+    if not await is_own_post(request=request, post_id=post_id, db=db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You can't edit posts that aren't your own",
+        )
+
+    else:
         post_query = db.query(Post).filter(Post.id == post_id)
         update_data = data.dict(exclude_unset=True)
         post_query.filter(Post.id == post_id).update(
             update_data, synchronize_session=False
         )
         db.commit()
-        db.refresh(current_post)
+        db.refresh(post_query.first())
+        return {"status": "success", "note": post_query.first()}
 
-    else:
+
+@router.delete("/", dependencies=[Depends(get_current_user)])
+async def delete_post(
+    request: Request, post_id: int = Query(None), db: Session = Depends(get_db)
+):
+    if not await get_post(post_id, db):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You can't edit posts that aren't your own",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found",
         )
 
-    return {"status": "success", "note": current_post}
+    if not await is_own_post(request=request, post_id=post_id, db=db):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You can't delete posts that aren't your own",
+        )
 
-
-@router.delete("/")
-def delete_post(post_id: int = Query(None)):
-    return f"delete post with id: {post_id}"
+    else:
+        db_post = db.query(Post).filter(Post.id == post_id).first()
+        db.delete(db_post)
+        db.commit()
+        return {"status": "success"}
 
 
 @router.get("/", response_model=PostResponseScheme)
