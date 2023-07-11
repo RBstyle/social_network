@@ -26,7 +26,7 @@ router = APIRouter(prefix="/profiles", tags=["profiles"])
     response_model=ProfileResponseScheme,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_profile(
+async def create_user(
     db: Session = Depends(get_db), *, data: CreateProfileRequestScheme
 ):
     """Create new user"""

@@ -8,12 +8,12 @@ from app.schemas.likes import LikeResponseScheme, ChangeLikeRequestScheme
 from app.db.models import Like
 from app.db.database import get_db
 
-router = APIRouter(prefix="/likes", tags=["likes"])
-
-
-@router.post(
-    "/", dependencies=[Depends(get_current_user)], response_model=LikeResponseScheme
+router = APIRouter(
+    prefix="/likes", tags=["likes"], dependencies=[Depends(get_current_user)]
 )
+
+
+@router.post("/", response_model=LikeResponseScheme)
 async def evaluate(
     request: Request,
     post_id: int = Query(None),

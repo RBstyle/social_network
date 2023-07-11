@@ -1,11 +1,16 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 
 from app.routers import profiles, posts, likes
-from app.services.deps import get_current_user
-from app.db.models import Profile
-from app.schemas.profiles import UserOut
+from . import swagger_vars
 
-app = FastAPI()
+FastAPI
+app = FastAPI(
+    title=swagger_vars.title,
+    description=swagger_vars.description,
+    summary=swagger_vars.summary,
+    version=swagger_vars.version,
+    openapi_tags=swagger_vars.tags_metadata,
+)
 
 app.include_router(profiles.router)
 app.include_router(posts.router)
@@ -15,10 +20,3 @@ app.include_router(likes.router)
 @app.get("/")
 def test():
     return {"message": "It's alive!!"}
-
-
-@app.get(
-    "/me", summary="Get details of currently logged in user", response_model=UserOut
-)
-async def get_me(user: Profile = Depends(get_current_user)):
-    return user
