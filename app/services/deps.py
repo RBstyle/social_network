@@ -22,7 +22,9 @@ async def get_current_user(
     request: Request = None,
 ) -> SystemUser:
     if request:
-        token = request.headers.get("Authorization")
+        token = request.cookies.get("access_token")
+        if not token:
+            return
         if "Bearer" in token:
             token: str = token.split("Bearer")[1].strip()
     else:

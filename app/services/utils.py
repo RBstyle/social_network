@@ -1,9 +1,11 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from fastapi.requests import Request
 
-from app.db.models import Post
+from app.db.models import Post, Profile
+from app.db.database import get_db
 from app.services.deps import get_current_user
+from app.services.security import verify_password
 
 
 async def get_post(post_id: int, db: Session):
@@ -30,3 +32,12 @@ async def check_post(request: Request, post_id: int, db: Session):
             detail="You can't edit posts that aren't your own",
         )
     return None
+
+
+def check_user(username: str, password: str, db: Session = Depends(get_db)):
+    user = db.query(Profile).filter(Profile.email == username).first()
+    if not user:
+        return False
+    if not verify_password(password=password, hashed_pass=user.hashed_password):
+        return False
+    return user

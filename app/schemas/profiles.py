@@ -23,7 +23,7 @@ class CreateProfileRequestScheme(BaseModel):
 
 class TokenScheme(BaseModel):
     access_token: str
-    refresh_token: str
+    token_type: str
 
 
 class UpdateProfileRequestScheme(BaseModel):
