@@ -1,37 +1,50 @@
 ### Starting:
-1. Install dependencies from `requirements.txt`
+### 1. Create virtual environment and install dependencies from `requirements.txt`
 ```shell
-pip install -r requirements.txt
+$ python3 -m venv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
 ```
-2. Create relation with the database
+
+### 2. Create database
 ```shell
-alembic init alembic
+$ sudo -u postgres psql -c 'CREATE DATABASE social_network;'
 ```
-Next you need setup URI to the database in `alembic.ini`
+
+### 3. Create relation with the database
+```shell
+$ alembic init alembic
+```
+
+### 4. Setup URI to the database in `alembic.ini`
+for example:
 ```
 sqlalchemy.url = postgresql://postgres:postgres@localhost:5432/social_network
 ```
- and set metadata in `alembic/env.py`
-```
+### 5. Set metadata in `alembic/env.py`
+```python
 from app.db.database import Base
 from app.db.models import Profile, Post, Like
 
 target_metadata = Base.metadata
 ```
-Next make migrations:
+### 6. Make migrations:
 ```shell
-alembic revision --autogenerate
+$ alembic revision --autogenerate
+$ alembic upgrade head
 ```
-And do a migrations:
+
+### 7. Rename file `.env.simple` to `.env` and fill variables with values.
+
+### 8. Start with uvicorn
 ```shell
-alembic upgrade head
+$ uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
-3. Setting up enviroment,
-rename file `.env.simple` to `.env` and fill variables with values.
-4. Start with uvicorn
-```shell
-uvicorn app.main:app --host 127.0.0.1 --port 8000
-```
-Swagger UI : ```http://127.0.0.1:8000/docs```
+
+Signup form: `http://127.0.0.1:8000/auth/signup`
+
+Login form: `http://127.0.0.1:8000/auth/login`
+
+Swagger UI : `http://127.0.0.1:8000/docs`
 
 Swagger specification is in `docs/`
