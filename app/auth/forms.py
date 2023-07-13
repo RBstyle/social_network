@@ -19,10 +19,13 @@ class LoginForm:
     async def is_valid(self):
         if not self.username or not (self.username.__contains__("@")):
             self.errors.append("Email is required")
+
         if not self.password or not len(self.password) >= 4:
             self.errors.append("A valid password is required")
+
         if not self.errors:
             return True
+
         return False
 
 
@@ -47,8 +50,10 @@ class SignupForm:
     async def is_valid(self):
         if not self.username or not (self.username.__contains__("@")):
             self.errors.append("Email is required")
+
         if not self.first_name:
             self.errors.append("First name is required")
+
         if (
             self.password1
             and self.password2
@@ -56,6 +61,8 @@ class SignupForm:
             or not len(self.password1) >= 4
         ):
             self.errors.append("A valid password is required")
+
         if not self.errors:
             return True
+
         return False

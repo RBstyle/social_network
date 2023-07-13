@@ -32,6 +32,7 @@ async def evaluate(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You can't like your's posts",
         )
+
     current_user = await get_current_user(request=request, db=db)
     db_like = Like(
         post_id=post_id,

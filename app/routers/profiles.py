@@ -5,6 +5,8 @@ from datetime import timedelta
 
 from app.db.database import get_db
 from app.db.models import Profile
+from app.services.deps import get_current_user
+from app.services.utils import check_user
 from app.services.security import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     get_hashed_password,
@@ -15,8 +17,6 @@ from app.schemas.profiles import (
     CreateProfileRequestScheme,
     TokenScheme,
 )
-from app.services.deps import get_current_user
-from app.services.utils import check_user
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
@@ -31,11 +31,13 @@ async def create_user(
 ):
     """Create new user"""
     user = db.query(Profile).filter_by(email=data.email).all()
+
     if user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User with this email already exist",
         )
+
     db_user = Profile(
         email=data.email.lower(),
         first_name=data.first_name,
@@ -55,11 +57,13 @@ def login_for_access_token(
     db: Session = Depends(get_db),
 ):
     user = check_user(form_data.username, form_data.password, db)
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
         )
+
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         subject=user.email, expires_delta=access_token_expires

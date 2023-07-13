@@ -6,15 +6,12 @@ from app.db.database import get_db
 from app.db.models import Post
 from app.services.deps import get_current_user
 from app.services.utils import get_post, check_post
-
 from app.schemas.posts import (
     PostResponseScheme,
     ChangePostRequestScheme,
 )
 
 router = APIRouter(prefix="/posts", tags=["posts"])
-
-"""As a user I need to be able to create, edit, delete and view posts"""
 
 
 @router.post(

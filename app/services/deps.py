@@ -6,7 +6,6 @@ from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-
 from app.services.security import ALGORITHM, JWT_SECRET_KEY
 from app.schemas.profiles import TokenPayload, SystemUser
 from app.db.database import get_db
@@ -23,16 +22,20 @@ async def get_current_user(
 ) -> SystemUser:
     if request:
         token = request.cookies.get("access_token")
+
         if not token:
             return
+
         if "Bearer" in token:
             token: str = token.split("Bearer")[1].strip()
+
     else:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     try:
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
         token_data = TokenPayload(**payload)

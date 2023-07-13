@@ -23,6 +23,7 @@ def login(request: Request):
 async def login(request: Request, db: Session = Depends(get_db)):
     form = LoginForm(request)
     await form.load_data()
+
     if await form.is_valid():
         try:
             form.__dict__.update(msg="Login Successful :)")
@@ -33,6 +34,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
             form.__dict__.update(msg="Error!")
             form.__dict__.get("errors").append("Incorrect Email or Password")
             return templates.TemplateResponse(login_template, form.__dict__)
+
     return templates.TemplateResponse(login_template, form.__dict__)
 
 
@@ -45,6 +47,7 @@ def signup(request: Request):
 async def signup(request: Request, db: Session = Depends(get_db)):
     form = SignupForm(request)
     await form.load_data()
+
     if await form.is_valid():
         try:
             email = form.__dict__.get("username")
@@ -66,6 +69,7 @@ async def signup(request: Request, db: Session = Depends(get_db)):
             form.__dict__.update(msg="Error!")
             form.__dict__.get("errors").append("Incorrect Email or Password")
             return templates.TemplateResponse(signup_template, form.__dict__)
+
     return templates.TemplateResponse(signup_template, form.__dict__)
 
 

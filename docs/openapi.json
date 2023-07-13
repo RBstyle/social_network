@@ -1,0 +1,740 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Social network",
+        "summary": "Social networking application",
+        "description": "\n# Simple RESTful API for a social networking application\n---\n### **Functional:**\n- User can signup and login\n- User can create, edit, delete and view posts\n- User can like or dislike other users’ posts but not his own \n",
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/profiles/": {
+            "get": {
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "Get User",
+                "operationId": "get_user_profiles__get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Id"
+                        },
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfileResponseScheme"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "Create User",
+                "description": "Create new user",
+                "operationId": "create_user_profiles__post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateProfileRequestScheme"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfileResponseScheme"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/profiles/login": {
+            "post": {
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "Login For Access Token",
+                "operationId": "login_for_access_token_profiles_login_post",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_login_for_access_token_profiles_login_post"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenScheme"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/": {
+            "get": {
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get Post By Id",
+                "operationId": "get_post_by_id_posts__get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Post Id"
+                        },
+                        "name": "post_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResponseScheme"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Create Post",
+                "description": "Create post",
+                "operationId": "create_post_posts__post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangePostRequestScheme"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResponseScheme"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Delete Post",
+                "operationId": "delete_post_posts__delete",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Post Id"
+                        },
+                        "name": "post_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Edit Post",
+                "operationId": "edit_post_posts__patch",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Post Id"
+                        },
+                        "name": "post_id",
+                        "in": "query"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangePostRequestScheme"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ]
+            }
+        },
+        "/likes/": {
+            "post": {
+                "tags": [
+                    "likes"
+                ],
+                "summary": "Evaluate",
+                "operationId": "evaluate_likes__post",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Post Id"
+                        },
+                        "name": "post_id",
+                        "in": "query"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangeLikeRequestScheme"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LikeResponseScheme"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ]
+            }
+        },
+        "/auth/login": {
+            "get": {
+                "tags": [
+                    "login"
+                ],
+                "summary": "Login",
+                "operationId": "login_auth_login_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "login"
+                ],
+                "summary": "Login",
+                "operationId": "login_auth_login_post",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "get": {
+                "tags": [
+                    "login"
+                ],
+                "summary": "Signup",
+                "operationId": "signup_auth_signup_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "login"
+                ],
+                "summary": "Signup",
+                "operationId": "signup_auth_signup_post",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "get": {
+                "tags": [
+                    "login"
+                ],
+                "summary": "Logout",
+                "operationId": "logout_auth_logout_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "summary": "Index",
+                "operationId": "index__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Body_login_for_access_token_profiles_login_post": {
+                "properties": {
+                    "grant_type": {
+                        "type": "string",
+                        "pattern": "password",
+                        "title": "Grant Type"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "password": {
+                        "type": "string",
+                        "title": "Password"
+                    },
+                    "scope": {
+                        "type": "string",
+                        "title": "Scope",
+                        "default": ""
+                    },
+                    "client_id": {
+                        "type": "string",
+                        "title": "Client Id"
+                    },
+                    "client_secret": {
+                        "type": "string",
+                        "title": "Client Secret"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "username",
+                    "password"
+                ],
+                "title": "Body_login_for_access_token_profiles_login_post"
+            },
+            "ChangeLikeRequestScheme": {
+                "properties": {
+                    "status": {
+                        "type": "integer",
+                        "title": "Status"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "status"
+                ],
+                "title": "ChangeLikeRequestScheme"
+            },
+            "ChangePostRequestScheme": {
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "content": {
+                        "type": "string",
+                        "title": "Content"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "content"
+                ],
+                "title": "ChangePostRequestScheme"
+            },
+            "CreateProfileRequestScheme": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "title": "Email"
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "title": "First Name"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Last Name"
+                    },
+                    "password": {
+                        "type": "string",
+                        "title": "Password"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "email",
+                    "first_name",
+                    "password"
+                ],
+                "title": "CreateProfileRequestScheme"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "LikeResponseScheme": {
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "title": "Post Id"
+                    },
+                    "status": {
+                        "type": "integer",
+                        "title": "Status"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "post_id",
+                    "status"
+                ],
+                "title": "LikeResponseScheme"
+            },
+            "PostResponseScheme": {
+                "properties": {
+                    "owner_id": {
+                        "type": "integer",
+                        "title": "Owner Id"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "content": {
+                        "type": "string",
+                        "title": "Content"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "owner_id",
+                    "content"
+                ],
+                "title": "PostResponseScheme"
+            },
+            "ProfileResponseScheme": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "title": "Email"
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "title": "First Name"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Last Name"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "email",
+                    "first_name",
+                    "created_at"
+                ],
+                "title": "ProfileResponseScheme"
+            },
+            "TokenScheme": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "title": "Access Token"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "title": "Token Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "access_token",
+                    "token_type"
+                ],
+                "title": "TokenScheme"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        },
+        "securitySchemes": {
+            "JWT": {
+                "type": "oauth2",
+                "flows": {
+                    "password": {
+                        "scopes": {},
+                        "tokenUrl": "/profiles/login"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "profiles",
+            "description": "Creating and editing users"
+        },
+        {
+            "name": "posts",
+            "description": "Creating and editing posts"
+        },
+        {
+            "name": "likes",
+            "description": "Creating likes"
+        }
+    ]
+}

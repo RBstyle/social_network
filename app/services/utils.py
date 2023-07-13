@@ -31,13 +31,17 @@ async def check_post(request: Request, post_id: int, db: Session):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You can't edit posts that aren't your own",
         )
+
     return None
 
 
 def check_user(username: str, password: str, db: Session = Depends(get_db)):
     user = db.query(Profile).filter(Profile.email == username).first()
+
     if not user:
         return False
+
     if not verify_password(password=password, hashed_pass=user.hashed_password):
         return False
+
     return user
