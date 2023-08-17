@@ -2,10 +2,32 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Depends
 from fastapi.requests import Request
 
-from app.db.models import Post, Profile
+from app.db.models import Post, Profile, Like
 from app.db.database import get_db
 from app.services.deps import get_current_user
 from app.services.security import verify_password
+
+
+async def own_post_list(request: Request, db: Session):
+    current_user = await get_current_user(request=request, db=db)
+    try:
+        return db.query(Post).filter_by(owner_id=current_user.id).all()
+    except:
+        return
+
+
+async def post_list(db: Session):
+    try:
+        return db.query(Post).all()
+    except:
+        return
+
+
+async def get_likes(db: Session):
+    try:
+        return db.query(Like).all()
+    except:
+        return
 
 
 async def get_post(post_id: int, db: Session):

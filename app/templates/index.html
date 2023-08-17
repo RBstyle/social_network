@@ -16,7 +16,9 @@
             {% if user %}
             <div class="badge bg-success text-wrap font-weight-bold" style="font-size: large;">
                 {{user.email}}
+                <br>
                 <a href="/auth/logout">logout</a>
+                <a href="/posts">posts</a>
                 {% else %}
             </div>
             <div class="badge bg-success text-wrap font-weight-bold" style="font-size: large;">

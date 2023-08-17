@@ -7,7 +7,7 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from app.services.security import ALGORITHM, JWT_SECRET_KEY
-from app.schemas.profiles import TokenPayload, SystemUser
+from app.schemas.profiles import TokenPayload, UserOut
 from app.db.database import get_db
 from app.db.models import Profile
 
@@ -19,7 +19,7 @@ async def get_current_user(
     token: str = Depends(reuseable_oauth),
     db: Session = Depends(get_db),
     request: Request = None,
-) -> SystemUser:
+) -> UserOut:
     if request:
         token = request.cookies.get("access_token")
 
@@ -57,7 +57,7 @@ async def get_current_user(
     db_user = db.query(Profile).filter_by(email=token_data.sub).first()
 
     if db_user:
-        sys_user = SystemUser(
+        sys_user = UserOut(
             id=db_user.id,
             email=db_user.email,
             password=db_user.hashed_password,

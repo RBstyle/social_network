@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+<title>Login</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="r">
+            <a href="/">Home</a>
+            <a href="/posts/create">New Post</a>
+        </div>
+        {% for like in likes %}
+        {{like.status}}
+        {% endfor %}
+        {% if posts %}
+        <h1>Your posts</h1>
+        {% for post in posts %}
+        <hr style="width: 100%;text-align:left;background-color:green">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.content }}</p>
+        {% if post.owner_id == user.id %}
+        <div>
+            <input type="checkbox" onclick='window.location.assign("#")' />Like
+        </div>
+        {% endif %}
+        <hr style="width: 100%;text-align:left;background-color:green">
+        {% endfor %}
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

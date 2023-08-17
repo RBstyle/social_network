@@ -1,17 +1,21 @@
 from fastapi import APIRouter, Depends, Query, status
 from fastapi.requests import Request
 from sqlalchemy.orm import Session
+from fastapi.templating import Jinja2Templates
 
 from app.db.database import get_db
 from app.db.models import Post
 from app.services.deps import get_current_user
-from app.services.utils import get_post, check_post
+from app.services.utils import check_post, own_post_list, post_list, get_likes
 from app.schemas.posts import (
     PostResponseScheme,
     ChangePostRequestScheme,
 )
 
 router = APIRouter(prefix="/posts", tags=["posts"])
+templates = Jinja2Templates(directory="app/templates")
+posts_template = "posts/list.html"
+create_post_template = "posts/create.html"
 
 
 @router.post(
@@ -76,8 +80,33 @@ async def delete_post(
     return {"status": "success"}
 
 
-@router.get("/", response_model=PostResponseScheme)
-async def get_post_by_id(
-    post_id: int = Query(None), db: Session = Depends(get_db)
-) -> Post:
-    return await get_post(post_id=post_id, db=db)
+@router.get(
+    "/",
+    dependencies=[Depends(get_current_user)],
+)
+async def get_posts(request: Request, db: Session = Depends(get_db)):
+    data = {"request": request}
+    user = await get_current_user(request=request, db=db)
+    posts = await post_list(db=db)
+    likes = await get_likes(db=db)
+    data["user"] = user
+    data["posts"] = posts
+    data["likes"] = likes
+    return templates.TemplateResponse(posts_template, data)
+
+
+@router.get(
+    "/create",
+    dependencies=[Depends(get_current_user)],
+)
+async def create_form(request: Request, db: Session = Depends(get_db)):
+    data = {"request": request}
+    user = await get_current_user(request=request, db=db)
+    data["user"] = user
+
+    return templates.TemplateResponse(create_post_template, data)
+
+
+@router.get("/list", dependencies=[Depends(get_current_user)])
+async def get_own_post_list(request: Request, db: Session = Depends(get_db)):
+    return await own_post_list(request=request, db=db)
